@@ -1,14 +1,14 @@
 
 import React from 'react';
 
-class Home extends React.Component {
+class Topics extends React.Component {
 	render () {
 		return (
 			<div>
-				<p>Homepage</p>
+				<p>Посты</p>
 			</div>
 		);
 	}
 }
 
-export default Home;
+export default Topics;
