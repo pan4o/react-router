@@ -4,20 +4,9 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import App from './app/App';
 
-const initialState = [
-	'Smells like teen spirit',
-	'Killing in the name'
-];
+import allCombineReducers from './reducers';
 
-function keepState(state = initialState, action) {
-	if (action.type === 'ADD_TRACK') {
-		return [...state, action.trackName];
-	}
-
-	return state;
-}
-
-const store = createStore(keepState);
+const store = createStore(allCombineReducers);
 
 ReactDOM.render(
 	<Provider store={store}>

@@ -8,9 +8,13 @@ import Topics from '../topics/Topics';
 import Topic from '../topic/Topic';
 
 class App extends Component {
-	render() {
-		console.log(this.props.testStore);
 
+	addTrack() {
+		this.props.onAddTrack(this.trackInput.value);
+		this.trackInput.value = "";
+	}
+
+	render() {
 		return (
 			<div>
 				<Router>
@@ -25,13 +29,16 @@ class App extends Component {
 					</div>
 				</Router>
 
-				<input type="text" />
-				<button>Send</button>
+				<input type="text" ref={(input) => {this.trackInput = input}}/>
+				<button onClick={this.addTrack.bind(this)}>Send</button>
 				<ul>
 					{
-						this.props.testStore.map((track, index) => <li key={index}>{track}</li>)
+						this.props._tracks.map((track, index) => <li key={index}>{track}</li>)
 					}
 				</ul>
+				{
+					this.props._playlists.map((playlist, index) => <p key={index}>{playlist}</p>)
+				}
 			</div>
 		);
 	}
@@ -39,7 +46,15 @@ class App extends Component {
 
 export default connect(
 	state => ({
-		testStore: state
+		_tracks: state.tracks,
+		_playlists: state.playlists
 	}),
-	dispatch => ({})
+	dispatch => ({
+		onAddTrack: (trackName) => {
+			dispatch({
+				type: 'ADD_TRACK',
+				newTrack: trackName
+			})
+		}
+	})
 )(App);
