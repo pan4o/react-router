@@ -14,6 +14,10 @@ class App extends Component {
 		this.trackInput.value = "";
 	}
 
+	removeAllTracks() {
+		this.props.onRemoveAllTracks();
+	}
+
 	render() {
 		return (
 			<div>
@@ -36,9 +40,7 @@ class App extends Component {
 						this.props._tracks.map((track, index) => <li key={index}>{track}</li>)
 					}
 				</ul>
-				{
-					this.props._playlists.map((playlist, index) => <p key={index}>{playlist}</p>)
-				}
+				{this.props._tracks.length > 0 && <button onClick={this.removeAllTracks.bind(this)}>Remove All Tracks</button>}
 			</div>
 		);
 	}
@@ -46,14 +48,18 @@ class App extends Component {
 
 export default connect(
 	state => ({
-		_tracks: state.tracks,
-		_playlists: state.playlists
+		_tracks: state.tracks
 	}),
 	dispatch => ({
 		onAddTrack: (trackName) => {
 			dispatch({
 				type: 'ADD_TRACK',
 				newTrack: trackName
+			})
+		},
+		onRemoveAllTracks: () => {
+			dispatch({
+				type: 'REMOVE_ALL_TRACKS'
 			})
 		}
 	})
