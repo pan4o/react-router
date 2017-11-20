@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-/*my components*/
-import Home from '../home/Home';
-import Topics from '../topics/Topics';
-import Topic from '../topic/Topic';
 
 class App extends Component {
 
@@ -18,49 +12,74 @@ class App extends Component {
 		this.props.onRemoveAllTracks();
 	}
 
+	findTrack() {
+		this.props.onFindTrack(this.findInput.value);
+	}
+
 	render() {
 		return (
 			<div>
-				<Router>
-					<div>
-						<p><Link to="/">Homepage</Link></p>
-						<p><Link to="/topics">All Posts</Link></p>
-						<p><Link to="/topic">Post</Link></p>
-
-						<Route exact path="/" component={Home}/>
-						<Route exact path="/topics" component={Topics}/>
-						<Route exact path="/topic" component={Topic}/>
-					</div>
-				</Router>
-
-				<input type="text" ref={(input) => {this.trackInput = input}}/>
-				<button onClick={this.addTrack.bind(this)}>Send</button>
+				<div>
+					<input type="text" ref={(input) => {this.trackInput = input}}/>
+					<button onClick={this.addTrack.bind(this)}>Send</button>
+				</div>
+				<div>
+					<input type="text" ref={(input) => {this.findInput = input}}/>
+					<button onClick={this.findTrack.bind(this)}>Find track</button>
+				</div>
 				<ul>
 					{
-						this.props._tracks.map((track, index) => <li key={index}>{track}</li>)
+						this.props.tracksFromState.map((track, index) => <li key={index}>{track.name}</li>)
 					}
 				</ul>
-				{this.props._tracks.length > 0 && <button onClick={this.removeAllTracks.bind(this)}>Remove All Tracks</button>}
+
+				{this.props.tracksFromState.length > 0 && <button onClick={this.removeAllTracks.bind(this)}>Remove All Tracks</button>}
 			</div>
 		);
 	}
 }
 
+// tracksFromState доступна для рабаоты из пропсов по этой переменной бегает цикл в доме
+// state.tracks берется из глобального редьюсера ./reducers/index.js
+// track текущий обьект (обычныйй параметр в цикле, может называть как угодно)
+// state,filterTracks берется из глобального редьюсера ./reducers/index.js
+
 export default connect(
 	state => ({
-		_tracks: state.tracks
+		tracksFromState: state.tracks.filter(track => track.name.includes(state.filterTracks))
 	}),
 	dispatch => ({
-		onAddTrack: (trackName) => {
+
+		onAddTrack: (name) => {
+
+			const trackObject = {
+				id: Date.now().toString(),
+				name: name
+			}
+
 			dispatch({
 				type: 'ADD_TRACK',
-				newTrack: trackName
-			})
+				track: trackObject
+			});
+
 		},
+
 		onRemoveAllTracks: () => {
+
 			dispatch({
 				type: 'REMOVE_ALL_TRACKS'
-			})
+			});
+
+		},
+
+		onFindTrack: (name) => {
+
+			dispatch({
+				type: 'FIND_TRACK',
+				track: name
+			});
+
 		}
+
 	})
 )(App);
